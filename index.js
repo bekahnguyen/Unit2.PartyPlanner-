@@ -13,30 +13,42 @@ console.log(form)
 // add more parties button VV going to need options to put name/descrp/time/location
 // going to need a submit button 
 
-const handleSubmit = async (event) => {
+async function handleSubmit(event) {
     event.preventDefault()
 
     const title = event.target.title.value
-    const time = event.target.time.value
+    const date = event.target.date.value
     const location = event.target.location.value
     const description = event.target.description.value
+    //const cohort= ???
+
+
 
     const data = {
         name: title,
-        time: time,
+        date: new Date(date),
         location: location,
-        description: description
+        description: description,
+
     }
-    const response = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-    });
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
 
-    const result = await response.json();
+        const result = await response.json();
+        if (result.error) {
+            console.log(result.error);
+            throw new Error(result.error.message)
+        }
 
+    } catch (error) {
+        console.error(error);
+    }
     render();
 }
 
@@ -71,7 +83,7 @@ const render = async () => {
             partyEl.classList.add('box')
             partyEl.innerHTML =
                 `<h2>${party.name}</h2>
-                <p>${party.description}</p>
+                <p>Description: ${party.description}</p>
                 <p>${party.date}</p>
                 <p>${party.location}</p>`
 
